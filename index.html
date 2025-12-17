@@ -821,48 +821,45 @@
         // Set current year
         document.getElementById('year').textContent = new Date().getFullYear();
 
-        // Navbar Blur Effect
+        // --- Variables (declared first to avoid hoisting issues) ---
         const navbar = document.getElementById('navbar');
+        const btn = document.getElementById('mobile-menu-btn');
+        const menu = document.getElementById('mobile-menu');
+        const links = document.querySelectorAll('.mobile-link');
+        let isMenuOpen = false;
 
+        // --- Navbar Blur Effect ---
         const updateNavbarStyle = () => {
             if (isMenuOpen) {
                 navbar.classList.remove('bg-black/80', 'backdrop-blur-md', 'shadow-lg');
                 return;
             }
-
             if (window.scrollY > 50) {
                 navbar.classList.add('bg-black/80', 'backdrop-blur-md', 'shadow-lg');
             } else {
                 navbar.classList.remove('bg-black/80', 'backdrop-blur-md', 'shadow-lg');
             }
         };
-
         window.addEventListener('scroll', updateNavbarStyle);
 
-        // Menu Mobile Toggle
-        const btn = document.getElementById('mobile-menu-btn');
-        const menu = document.getElementById('mobile-menu');
-        const links = document.querySelectorAll('.mobile-link');
-        let isMenuOpen = false;
-
+        // --- Menu Mobile Toggle ---
         btn.addEventListener('click', () => {
             isMenuOpen = !isMenuOpen;
             if (isMenuOpen) {
                 menu.classList.remove('translate-x-full');
                 document.body.style.overflow = 'hidden';
-                // Force hardware acceleration
                 menu.style.willChange = 'transform';
                 btn.innerHTML = `<svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>`;
             } else {
                 menu.classList.add('translate-x-full');
                 document.body.style.overflow = '';
-                menu.style.willChange = 'auto'; // Cleanup
+                menu.style.willChange = 'auto';
                 btn.innerHTML = `<svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>`;
             }
             updateNavbarStyle();
         });
 
-        // Fermer le menu au clic
+        // --- Close menu when clicking a link ---
         links.forEach(link => {
             link.addEventListener('click', () => {
                 isMenuOpen = false;
@@ -872,6 +869,23 @@
                 btn.innerHTML = `<svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>`;
                 updateNavbarStyle();
             });
+        });
+
+        // --- Scroll Animation Observer (RESTORED) ---
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: "0px 0px -50px 0px"
+        };
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+        document.querySelectorAll('.reveal').forEach(el => {
+            observer.observe(el);
         });
     </script>
 </body>
