@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="fr" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Billy Rolph Exumé | Créateur Visuel & Directeur Artistique</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700;800&family=Playfair+Display:ital,wght@1,400&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif'],
+                    },
+                    colors: {
+                        brand: {
+                            dark: '#050505',
+                            gray: '#121212',
+                            accent: '#3b82f6',
+                            purple: '#8b5cf6'
+                        }
+                    },
+                    animation: {
+                        'blob': 'blob 7s infinite',
+                    },
+                    keyframes: {
+                        blob: {
+                            '0%': { transform: 'translate(0px, 0px) scale(1)' },
+                            '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
+                            '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
+                            '100%': { transform: 'translate(0px, 0px) scale(1)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #030303;
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+
+        /* Grain de film */
+        .film-grain {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
+            z-index: 9999;
+            opacity: 0.4;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0a0a0a; }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #555; }
+
+        /* Animation Reveal */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.5, 0, 0, 1);
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .text-gradient {
+            background: linear-gradient(135deg, #60a5fa 0%, #c084fc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .bg-grid {
+            background-size: 40px 40px;
+            background-image: linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                              linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+        }
+
+        /* --- CUSTOM SERVICE CARDS CSS --- */
+        
+        /* Card Base */
+        .service-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .service-card:hover {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(96, 165, 250, 0.3);
+            transform: translateY(-5px);
+        }
+
+        /* 1. Icone: Viseur (Réalisation) */
+        .icon-viewfinder {
+            position: relative;
+            width: 50px;
+            height: 50px;
+        }
+        .icon-viewfinder::before, .icon-viewfinder::after {
+            content: '';
+            position: absolute;
+            width: 15px;
+            height: 15px;
+            border: 2px solid #60a5fa;
+            transition: all 0.4s ease;
+        }
+        .icon-viewfinder::before { top: 0; left: 0; border-right: 0; border-bottom: 0; }
+        .icon-viewfinder::after { bottom: 0; right: 0; border-left: 0; border-top: 0; }
+        
+        /* Coins opposés */
+        .icon-viewfinder span::before, .icon-viewfinder span::after {
+            content: '';
+            position: absolute;
+            width: 15px;
+            height: 15px;
+            border: 2px solid #60a5fa;
+            transition: all 0.4s ease;
+        }
+        .icon-viewfinder span::before { top: 0; right: 0; border-left: 0; border-bottom: 0; }
+        .icon-viewfinder span::after { bottom: 0; left: 0; border-right: 0; border-top: 0; }
+
+        /* Point rouge REC */
+        .rec-dot {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 8px; height: 8px;
+            background-color: #ef4444;
+            border-radius: 50%;
+            opacity: 0.5;
+            transition: 0.3s;
+        }
+        
+        .service-card:hover .icon-viewfinder::before { top: 5px; left: 5px; }
+        .service-card:hover .icon-viewfinder::after { bottom: 5px; right: 5px; }
+        .service-card:hover .icon-viewfinder span::before { top: 5px; right: 5px; }
+        .service-card:hover .icon-viewfinder span::after { bottom: 5px; left: 5px; }
+        .service-card:hover .rec-dot { opacity: 1; box-shadow: 0 0 10px #ef4444; }
+
+        /* 2. Icone: Timeline (Montage) */
+        .icon-timeline {
+            position: relative;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 6px;
+        }
+        .track {
+            height: 4px;
+            background: #333;
+            border-radius: 2px;
+            position: relative;
+            overflow: hidden;
+        }
+        .clip {
+            position: absolute;
+            top: 0; bottom: 0;
+            background: #8b5cf6;
+            border-radius: 2px;
+            transition: all 0.5s ease;
+        }
+        .t1 { left: 0; width: 40%; }
+        .t2 { left: 50%; width: 30%; background: #60a5fa; }
+        .t3 { left: 20%; width: 60%; background: #fff; opacity: 0.5;}
+
+        .service-card:hover .t1 { width: 50%; left: 10%; }
+        .service-card:hover .t2 { width: 40%; left: 60%; }
+        .service-card:hover .t3 { left: 0; width: 30%; }
+
+        /* 3. Icone: Storytelling (Wave) */
+        .icon-story {
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+        }
+        .wave-path {
+            width: 100%;
+            height: 2px;
+            background: transparent;
+            position: relative;
+        }
+        .node {
+            width: 8px; height: 8px;
+            background: #60a5fa;
+            border-radius: 50%;
+            position: absolute;
+            top: -3px;
+            transition: all 0.5s ease;
+        }
+        .n1 { left: 0; }
+        .n2 { left: 50%; transform: translateY(-10px); background: #8b5cf6;}
+        .n3 { left: 100%; transform: translateX(-100%); }
+        
+        /* Lignes connecteurs */
+        .line-connect {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            border-bottom: 2px solid rgba(255,255,255,0.2);
+            transform: skewY(10deg);
+            transition: 0.5s;
+        }
+
+        .service-card:hover .n2 { transform: translateY(10px); }
+        .service-card:hover .line-connect { transform: skewY(-10deg); border-color: rgba(96, 165, 250, 0.5); }
+
+        /* 4. Icone: Shorts (Vertical) */
+        .icon-shorts {
+            position: relative;
+            width: 26px; /* Ratio approx 9:16 */
+            height: 46px;
+            border: 2px solid #8b5cf6;
+            border-radius: 4px;
+            margin: 0 auto;
+            transition: all 0.4s;
+        }
+        .play-btn {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 0; height: 0;
+            border-top: 4px solid transparent;
+            border-bottom: 4px solid transparent;
+            border-left: 6px solid #fff;
+            opacity: 0.5;
+            transition: 0.3s;
+        }
+        .service-card:hover .icon-shorts {
+            border-color: #fff;
+            box-shadow: 0 0 15px rgba(139, 92, 246, 0.4);
+            transform: scale(1.1);
+        }
+        .service-card:hover .play-btn {
+            opacity: 1;
+            border-left-color: #8b5cf6;
+        }
+
+    </style>
+</head>
+<body>
+
+<!-- Overlay Grain de film -->
+<div class="film-grain"></div>
+
+<!-- Navigation -->
+<nav id="navbar" class="fixed w-full z-50 transition-all duration-300 py-6 border-b border-transparent">
+    <div class="max-w-7xl mx-auto px-6 flex justify-between items-center">
+        <a href="#" class="text-2xl font-bold tracking-tighter relative z-50">
+            Billy<span class="text-blue-500">.</span>Rolph
+        </a>
+
+        <!-- Desktop Menu -->
+        <div class="hidden md:flex items-center gap-8">
+            <a href="#accueil" class="text-xs font-medium hover:text-blue-400 transition-colors uppercase tracking-widest text-gray-300">Accueil</a>
+            <a href="#services" class="text-xs font-medium hover:text-blue-400 transition-colors uppercase tracking-widest text-gray-300">Expertise</a>
+            <a href="#videos" class="text-xs font-medium hover:text-blue-400 transition-colors uppercase tracking-widest text-gray-300">Portfolio</a>
+            
+            <!-- Status Available Integrated -->
+            <div class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 ml-2">
+                <span class="relative flex h-2 w-2">
+                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                  <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                </span>
+                <span class="text-[10px] font-bold uppercase tracking-widest text-gray-400">Disponible</span>
+            </div>
+
+            <a href="#contact" class="px-5 py-2 bg-white text-black font-bold rounded-full hover:bg-gray-200 transition-colors text-xs uppercase tracking-wide">
+                Contact
+            </a>
+        </div>
+
+        <!-- Mobile Menu Button -->
+        <button id="mobile-menu-btn" class="md:hidden text-white z-50 focus:outline-none">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+            </svg>
+        </button>
+    </div>
+
+    <!-- Mobile Menu Overlay -->
+    <div id="mobile-menu" class="fixed inset-0 bg-black/95 backdrop-blur-xl z-40 transform translate-x-full transition-transform duration-300 flex flex-col justify-center items-center space-y-8">
+        <a href="#accueil" class="mobile-link text-3xl font-bold">Accueil</a>
+        <a href="#services" class="mobile-link text-3xl font-bold">Expertise</a>
+        <a href="#videos" class="mobile-link text-3xl font-bold">Portfolio</a>
+        <div class="flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10">
+            <span class="relative flex h-3 w-3">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+            </span>
+            <span class="text-sm font-bold uppercase tracking-widest text-gray-300">Disponible</span>
+        </div>
+        <a href="#contact" class="mobile-link text-3xl font-bold text-blue-400">Me Contacter</a>
+    </div>
+</nav>
+
+<!-- Hero Section -->
+<section id="accueil" class="relative min-h-screen flex items-center justify-center overflow-hidden bg-grid">
+    <!-- Background Animation blobs -->
+    <div class="absolute top-0 -left-4 w-72 h-72 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
+    <div class="absolute top-0 -right-4 w-72 h-72 bg-blue-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
+    <div class="absolute -bottom-8 left-20 w-72 h-72 bg-indigo-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000"></div>
+
+    <div class="relative z-10 max-w-5xl mx-auto px-6 text-center">
+        
+        <h1 class="text-5xl md:text-8xl font-bold leading-tight mb-8 reveal" style="transition-delay: 100ms;">
+            Impact Visuel & <br />
+            <span class="text-gradient font-serif italic pr-2">Narration Précise.</span>
+        </h1>
+        
+        <p class="text-lg md:text-xl text-gray-400 max-w-2xl mx-auto mb-12 reveal font-light" style="transition-delay: 200ms;">
+            Réalisateur & Monteur Vidéo. Je transforme des concepts bruts en narrations visuelles percutantes. Du long format cinématographique au contenu social viral.
+        </p>
+        
+        <div class="flex flex-col sm:flex-row gap-6 justify-center items-center reveal" style="transition-delay: 300ms;">
+            <a href="#videos" class="px-8 py-4 bg-white text-black font-bold rounded-full hover:bg-gray-200 transition-all shadow-[0_0_20px_rgba(255,255,255,0.3)]">
+                Voir mes travaux
+            </a>
+            <a href="#contact" class="flex items-center text-gray-300 hover:text-white transition-colors group">
+                <span class="mr-2">Démarrer un projet</span>
+                <svg class="w-5 h-5 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Services Section (CUSTOM CARDS) -->
+<section id="services" class="py-24 bg-brand-gray relative border-t border-white/5">
+    <div class="max-w-7xl mx-auto px-6">
+        <div class="text-center mb-16 reveal">
+            <h2 class="text-xs font-bold text-blue-500 uppercase tracking-widest mb-3">Mes Services</h2>
+            <h3 class="text-4xl md:text-5xl font-bold">Expertise Créative</h3>
+        </div>
+
+        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            
+            <!-- Card 1 -->
+            <div class="service-card p-8 rounded-2xl reveal group cursor-default">
+                <div class="mb-8 h-16 flex items-center">
+                    <div class="icon-viewfinder">
+                        <span></span>
+                        <div class="rec-dot"></div>
+                    </div>
+                </div>
+                <h4 class="text-xl font-bold mb-3 text-white group-hover:text-blue-400 transition-colors">Réalisation</h4>
+                <p class="text-gray-500 text-sm leading-relaxed group-hover:text-gray-300 transition-colors">
+                    Direction artistique et technique. Je gère la vision globale du projet, du script à l'image finale.
+                </p>
+            </div>
+            
+            <!-- Card 2 -->
+            <div class="service-card p-8 rounded-2xl reveal group cursor-default" style="transition-delay: 100ms;">
+                <div class="mb-8 h-16 flex items-center">
+                    <div class="icon-timeline">
+                        <div class="track"><div class="clip t1"></div></div>
+                        <div class="track"><div class="clip t2"></div></div>
+                        <div class="track"><div class="clip t3"></div></div>
+                    </div>
+                </div>
+                <h4 class="text-xl font-bold mb-3 text-white group-hover:text-purple-400 transition-colors">Montage Pro</h4>
+                <p class="text-gray-500 text-sm leading-relaxed group-hover:text-gray-300 transition-colors">
+                    Assemblage rythmé et précis. Maîtrise des cuts, transitions et color grading pour un rendu broadcast.
+                </p>
+            </div>
+
+            <!-- Card 3 -->
+            <div class="service-card p-8 rounded-2xl reveal group cursor-default" style="transition-delay: 200ms;">
+                <div class="mb-8 h-16 flex items-center">
+                    <div class="icon-story">
+                        <div class="line-connect"></div>
+                        <div class="wave-path">
+                            <div class="node n1"></div>
+                            <div class="node n2"></div>
+                            <div class="node n3"></div>
+                        </div>
+                    </div>
+                </div>
+                <h4 class="text-xl font-bold mb-3 text-white group-hover:text-blue-400 transition-colors">Storytelling</h4>
+                <p class="text-gray-500 text-sm leading-relaxed group-hover:text-gray-300 transition-colors">
+                    Structuration narrative. Je transforme des informations brutes en une histoire captivante qui engage l'audience.
+                </p>
+            </div>
+
+            <!-- Card 4 -->
+            <div class="service-card p-8 rounded-2xl reveal group cursor-default" style="transition-delay: 300ms;">
+                <div class="mb-8 h-16 flex items-center justify-start">
+                    <div class="icon-shorts">
+                        <div class="play-btn"></div>
+                    </div>
+                </div>
+                <h4 class="text-xl font-bold mb-3 text-white group-hover:text-purple-400 transition-colors">Vertical & Viral</h4>
+                <p class="text-gray-500 text-sm leading-relaxed group-hover:text-gray-300 transition-colors">
+                    Contenus optimisés pour mobile (9:16). Dynamisme élevé pour maximiser la rétention sur TikTok & Reels.
+                </p>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- Long Videos Section -->
+<section id="videos" class="py-24 px-6 relative">
+    <div class="max-w-7xl mx-auto">
+        <div class="flex flex-col md:flex-row justify-between items-end mb-16 reveal">
+            <div>
+                <h2 class="text-xs font-bold text-blue-500 uppercase tracking-widest mb-3">Portfolio</h2>
+                <h3 class="text-4xl md:text-5xl font-bold">Formats Longs & Documentaires</h3>
+            </div>
+            <div class="hidden md:block w-1/3 h-[1px] bg-white/10 mb-4"></div>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-12">
+            <!-- Video 1 -->
+            <div class="reveal group">
+                <div class="aspect-video rounded-xl overflow-hidden bg-gray-900 border border-white/10 shadow-2xl relative">
+                    <!-- REMPLACE 'VIDEO_ID_1' CI-DESSOUS PAR L'ID YOUTUBE RÉEL -->
+                    <iframe class="w-full h-full" src="https://www.youtube.com/embed/VIDEO_ID_1" title="Istwa vil Jacmel lan" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+                </div>
+                <div class="mt-4 flex justify-between items-start">
+                    <h4 class="text-xl font-bold group-hover:text-blue-400 transition-colors">Istwa vil Jacmel lan</h4>
+                    <span class="text-xs border border-white/20 px-2 py-1 rounded text-gray-400">Documentaire</span>
+                </div>
+            </div>
+
+            <!-- Video 2 -->
+            <div class="reveal group" style="transition-delay: 100ms;">
+                <div class="aspect-video rounded-xl overflow-hidden bg-gray-900 border border-white/10 shadow-2xl relative">
+                    <!-- REMPLACE 'VIDEO_ID_2' CI-DESSOUS PAR L'ID YOUTUBE RÉEL -->
+                    <iframe class="w-full h-full" src="https://www.youtube.com/embed/VIDEO_ID_2" title="Pilòt ayisyen" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+                </div>
+                <div class="mt-4 flex justify-between items-start">
+                    <h4 class="text-xl font-bold group-hover:text-blue-400 transition-colors">Pilòt ayisyen ki te make listwa</h4>
+                    <span class="text-xs border border-white/20 px-2 py-1 rounded text-gray-400">Histoire</span>
+                </div>
+            </div>
+
+            <!-- Video 3 -->
+            <div class="reveal group">
+                <div class="aspect-video rounded-xl overflow-hidden bg-gray-900 border border-white/10 shadow-2xl relative">
+                    <!-- REMPLACE 'VIDEO_ID_3' CI-DESSOUS PAR L'ID YOUTUBE RÉEL -->
+                    <iframe class="w-full h-full" src="https://www.youtube.com/embed/VIDEO_ID_3" title="Machin dlo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+                </div>
+                <div class="mt-4 flex justify-between items-start">
+                    <h4 class="text-xl font-bold group-hover:text-blue-400 transition-colors">Machin kap mache ak dlo?</h4>
+                    <span class="text-xs border border-white/20 px-2 py-1 rounded text-gray-400">Tech / Science</span>
+                </div>
+            </div>
+
+            <!-- Video 4 -->
+            <div class="reveal group" style="transition-delay: 100ms;">
+                <div class="aspect-video rounded-xl overflow-hidden bg-gray-900 border border-white/10 shadow-2xl relative">
+                    <!-- REMPLACE 'VIDEO_ID_4' CI-DESSOUS PAR L'ID YOUTUBE RÉEL -->
+                    <iframe class="w-full h-full" src="https://www.youtube.com/embed/VIDEO_ID_4" title="Whatsapp Business" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+                </div>
+                <div class="mt-4 flex justify-between items-start">
+                    <h4 class="text-xl font-bold group-hover:text-blue-400 transition-colors">Koman WhatsApp rete gratis</h4>
+                    <span class="text-xs border border-white/20 px-2 py-1 rounded text-gray-400">Analyse Eco</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Shorts Section -->
+<section id="shorts" class="py-24 bg-[#080808] border-y border-white/5">
+    <div class="max-w-6xl mx-auto px-6">
+        <div class="text-center mb-16 reveal">
+            <span class="inline-block p-2 bg-purple-500/10 rounded-full mb-4">
+                <svg class="w-6 h-6 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+            </span>
+            <h3 class="text-4xl md:text-5xl font-bold">Shorts & Reels</h3>
+            <p class="mt-4 text-gray-400">Contenu vertical impactant pour l'ère des réseaux sociaux.</p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+            <!-- Short 1 -->
+            <div class="reveal group">
+                <div class="relative w-full rounded-2xl overflow-hidden shadow-2xl border border-gray-800 bg-gray-900 group-hover:border-purple-500/50 transition-colors" style="padding-top: 177.77%;">
+                    <iframe class="absolute top-0 left-0 w-full h-full" title="vimeo-player" src="https://player.vimeo.com/video/1147447562?h=36dc1338b3" frameborder="0" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share" allowfullscreen></iframe>
+                </div>
+            </div>
+
+            <!-- Short 2 -->
+            <div class="reveal group" style="transition-delay: 100ms;">
+                <div class="relative w-full rounded-2xl overflow-hidden shadow-2xl border border-gray-800 bg-gray-900 group-hover:border-purple-500/50 transition-colors" style="padding-top: 177.77%;">
+                    <iframe class="absolute top-0 left-0 w-full h-full" title="vimeo-player" src="https://player.vimeo.com/video/1091669446?h=97776f7cda" frameborder="0" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share" allowfullscreen></iframe>
+                </div>
+            </div>
+
+            <!-- Short 3 (Fixé) -->
+            <div class="reveal group" style="transition-delay: 200ms;">
+                <div class="relative w-full rounded-2xl overflow-hidden shadow-2xl border border-gray-800 bg-gray-900 group-hover:border-purple-500/50 transition-colors" style="padding-top: 177.77%;">
+                    <iframe class="absolute top-0 left-0 w-full h-full" title="vimeo-player" src="https://player.vimeo.com/video/1147445846?h=b1714dccba" frameborder="0" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share" allowfullscreen></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Contact Section -->
+<section id="contact" class="py-24 px-6 relative overflow-hidden">
+    <!-- Decoration background -->
+    <div class="absolute inset-0 bg-gradient-to-t from-blue-900/10 to-transparent"></div>
+    
+    <div class="max-w-4xl mx-auto text-center relative z-10 reveal">
+        <h2 class="text-5xl md:text-6xl font-bold mb-8">Prêt à collaborer ?</h2>
+        <p class="text-xl text-gray-400 mb-12 max-w-2xl mx-auto">
+            Chaque projet commence par une conversation. Discutons de vos objectifs et de la manière dont je peux vous aider à les atteindre visuellement.
+        </p>
+
+        <div class="grid sm:grid-cols-2 gap-6 max-w-2xl mx-auto">
+            <a href="https://wa.me/50931368824" target="_blank" class="group flex items-center justify-center px-8 py-5 bg-[#25D366] hover:bg-[#20bd5a] text-white rounded-xl transition-all shadow-lg hover:shadow-green-500/20 transform hover:-translate-y-1">
+                <svg class="w-6 h-6 mr-3" fill="currentColor" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
+                <span class="text-lg font-bold">WhatsApp</span>
+            </a>
+
+            <a href="mailto:Rbillyexume@gmail.com" class="group flex items-center justify-center px-8 py-5 bg-white text-black hover:bg-gray-100 rounded-xl transition-all shadow-lg transform hover:-translate-y-1">
+                <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                <span class="text-lg font-bold">Email Direct</span>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer class="py-8 text-center text-gray-600 border-t border-white/5 text-sm">
+    <p>© <span id="year"></span> Billy Rolph Exumé. Tous droits réservés.</p>
+    <p class="mt-2 text-xs uppercase tracking-widest">Designed for Creativity</p>
+</footer>
+
+<!-- JavaScript Logic -->
+<script>
+    // Set current year
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Menu Mobile Toggle
+    const btn = document.getElementById('mobile-menu-btn');
+    const menu = document.getElementById('mobile-menu');
+    const links = document.querySelectorAll('.mobile-link');
+    let isMenuOpen = false;
+
+    btn.addEventListener('click', () => {
+        isMenuOpen = !isMenuOpen;
+        if(isMenuOpen) {
+            menu.classList.remove('translate-x-full');
+            document.body.style.overflow = 'hidden'; 
+            btn.innerHTML = `<svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>`;
+        } else {
+            menu.classList.add('translate-x-full');
+            document.body.style.overflow = '';
+            btn.innerHTML = `<svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>`;
+        }
+    });
+
+    // Fermer le menu au clic
+    links.forEach(link => {
+        link.addEventListener('click', () => {
+            isMenuOpen = false;
+            menu.classList.add('translate-x-full');
+            document.body.style.overflow = '';
+            btn.innerHTML = `<svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>`;
+        });
+    });
+
+    // Scroll Animation Observer
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: "0px 0px -50px 0px"
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('active');
+                observer.unobserve(entry.target); 
+            }
+        });
+    }, observerOptions);
+
+    document.querySelectorAll('.reveal').forEach(el => {
+        observer.observe(el);
+    });
+
+    // Navbar Blur Effect
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 50) {
+            navbar.classList.add('bg-black/80', 'backdrop-blur-md', 'shadow-lg');
+        } else {
+            navbar.classList.remove('bg-black/80', 'backdrop-blur-md', 'shadow-lg');
+        }
+    });
+</script>
+</body>
+</html>
